@@ -1,0 +1,32 @@
+//PROGRAME TO CHECK WHETHER THE ENTERED CHARACTER IS A VOWEL OR NOT USING SWITCH CASE
+
+#include<stdio.h>
+#include<conio.h>
+void main()
+{
+char choice;
+clrscr();
+printf("\n enter any character:");
+choice=getchar();
+switch(choice)
+{
+case 'a':
+printf("\n the given character is a vowel");
+break;
+case 'e':
+printf("\n the given character is a vowel");
+break;
+case 'i':
+printf("\n the given character is a vowel");
+break;
+case 'o':
+printf("\n the given character is a vowel");
+break;
+case 'u':
+printf("\n the gien character is a vowel");
+break;
+default:
+printf("\n The given character is not a vowel");
+}
+getch();
+}
