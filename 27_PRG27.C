@@ -1,25 +1,24 @@
-/*THIS PROGRAM IS EXAMPLE FOR THE ITERATIVE CONTROL STRUCTURE
-PROGRAME TO PRINT PRIME NUMBERS USING FOR LOOP*/
+//THIS PROGRAM IS EXAMPLE FOR THE ITERATIVE CONTROL STRUCTURE
+//THIS PROGRAM TO PRINT MULTIPLICATION TABLE FROM 1 TO 20 USING FOR LOOP
 
 #include<stdio.h>
 #include<conio.h>
+#include<dos.h>
 void main()
 {
-int i,j,no,c;
+int i,j;
 clrscr();
-printf("Enter the number upto which prime number you want to print:");
-scanf("%d",&no);
-for(i=1;i<=no;i++)
+for(i=1;i<=10;i++)
 {
-for(j=2,c=0;j<i&&c==0;j++)
+printf("\a\a");
+clrscr();
+for(j=1;j<=20;j++)
 {
-if(i%j==0)
-c=i;
+printf("\n%d * %d == %d ",j,i,i*j);
 }
-if(c==0)
-printf("%d\n",i);
-}
+printf("\n**********************************************************************\n");
+sleep(5);
+printf("\n press any key to continue:");
 getch();
 }
-
-//DEVIL'S CODE
+}
