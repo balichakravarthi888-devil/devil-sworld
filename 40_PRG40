@@ -1,0 +1,51 @@
+/*PROGRAM TO READ ROLLNO NAME AND MARKS IN 5 SUBJECTS USING ARRAY FOR
+MARKS FIND OUT THE TOTAL MARKS IN 5 SUBJECTS AND FIND OUT AVERAGE RESULT
+AND GRADE AND PRINT ALL INFORMATION*/
+
+#include<stdio.h>
+#include<conio.h>
+void main()
+{
+int rollno,marks[5],total=0,i;
+float average;
+char name[15],result;
+clrscr();
+printf("\n Enter roll number of the student:");
+scanf("%d",&rollno);
+printf("\n Enter the name of the student:");
+scanf("%s",name);
+for(i=0;i<5;i++)
+{
+printf("\n Enter the subject %d marks:",i+1);
+scanf("%d",&marks[i]);
+}
+result='p';
+for(i=0;i<5;i++)
+{
+total+=marks[i];
+if(marks[i]<35)
+result='f';
+}
+average=total/5;
+clrscr();
+printf("\n The rollnumber of the student is :%d",rollno);
+printf("\n The name of the student is :%s",name);
+printf("\n The total marks of the student is :%d",total);
+printf("\n The total average marks of the student is :%f",average);
+if(result=='p')
+{
+printf("\n The student %s result is : PASS",name);
+if(average>=60)
+printf("\n The student Grade is : FIRST CLASS");
+else if(average>=50)
+printf("\n The student grade is: SECOND CLASS");
+else
+printf("\n The student grade is: THIRD CLASS");
+}
+else
+{
+printf("\n The student result is:Fail");
+printf("\n The Grade of the student is:Nill");
+}
+getch();
+}
