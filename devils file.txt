@@ -892,3 +892,149 @@ Voice
 No file chosenNo file chosen
 ChatGPT can make mistakes. Check important info. See Cookie Preferences.
 
+import pygame
+import random
+import math
+
+# -------------------
+# CONFIG
+# -------------------
+WIDTH, HEIGHT = 700, 700
+PARTICLE_COUNT = 15000
+NAME = "Love You"
+BG_COLOR = (10, 5, 25)
+TEXT_COLOR = (255, 200, 220)
+
+pygame.init()
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Big Heart Animation")
+
+
+font_path = "LeckerliOne-Regular.ttf"
+try:
+    font = pygame.font.Font(font_path, 72)
+except pygame.error:
+    print("Font file not found. Using Arial as a fallback.")
+    font = pygame.font.SysFont("Arial", 72, bold=True)
+
+# -------------------
+# Heart Generation and Bounding Box
+# -------------------
+def heart_points(n, scale, offset):
+    """
+    Generate n random points inside the heart more efficiently.
+    """
+    points = []
+    for _ in range(n):
+        t = random.uniform(0, 2 * math.pi)
+        r = random.uniform(0, 1)
+
+        x = scale * r * (16 * math.sin(t)**3)
+        y = -scale * r * (13 * math.cos(t) - 5 * math.cos(2*t) - 2 * math.cos(3*t) - math.cos(4*t))
+
+        points.append((x + offset[0], y + offset[1]))
+    return points
+
+# Adjust HEART_SCALE to prevent the heart from going off-screen
+heart_max_width = 32
+heart_max_height = 20
+scale_x = (WIDTH - 50) / heart_max_width
+scale_y = (HEIGHT - 50) / heart_max_height
+HEART_SCALE = min(scale_x, scale_y)
+
+heart_positions = heart_points(PARTICLE_COUNT, HEART_SCALE, (WIDTH // 2, HEIGHT // 2))
+
+# -------------------
+# Particle Class
+# -------------------
+class Particle:
+    def __init__(self, target):
+        self.x, self.y = random.randint(0, WIDTH), random.randint(0, HEIGHT)
+        self.target = target
+        
+        # INCREASED speed for a faster animation
+        self.speed = random.uniform(0.02, 0.05)
+        self.size = random.randint(2, 4)
+        
+        self.color = (
+            random.randint(230, 255),
+            random.randint(50, 100),
+            random.randint(100, 150)
+        )
+        
+    def update(self, pulse_scale):
+        tx, ty = self.target
+        cx, cy = WIDTH // 2, HEIGHT // 2
+        
+        dist_x = tx - cx
+        dist_y = ty - cy
+        
+        tx_pulsed = cx + dist_x * pulse_scale
+        ty_pulsed = cy + dist_y * pulse_scale
+        
+        dx, dy = tx_pulsed - self.x, ty_pulsed - self.y
+        self.x += dx * self.speed
+        self.y += dy * self.speed
+
+    def draw(self, surf):
+        glow_alpha = 50 
+        glow_surf = pygame.Surface((self.size * 2, self.size * 2), pygame.SRCALPHA)
+        pygame.draw.circle(glow_surf, self.color + (glow_alpha,), (self.size, self.size), self.size)
+        surf.blit(glow_surf, (self.x - self.size, self.y - self.size))
+        
+        pygame.draw.circle(surf, self.color, (int(self.x), int(self.y)), self.size)
+
+particles = [Particle(target) for target in heart_positions]
+
+# -------------------
+# Main Loop
+# -------------------
+running = True
+clock = pygame.time.Clock()
+time_counter = 0
+
+fade_alpha = 0
+scale_factor = 1.0
+
+while running:
+    screen.fill(BG_COLOR)
+    time_counter += 0.05
+
+    pulse_scale = 1 + 0.05 * math.sin(time_counter * 1.5)
+
+    for p in particles:
+        p.update(pulse_scale)
+        p.draw(screen)
+
+    mx, my = pygame.mouse.get_pos()
+    
+    def inside_heart_check(x, y, scale, offset):
+        nx = (x - offset[0]) / scale
+        ny = (y - offset[1]) / scale
+        val = (nx**2 + ny**2 - 1)**3 - nx**2 * ny**3
+        return val <= 0
+        
+    show_name = inside_heart_check(mx, my, HEART_SCALE, (WIDTH // 2, HEIGHT // 2))
+
+    if show_name:
+        fade_alpha = min(255, fade_alpha + 10)
+        scale_factor = 1 + 0.05 * math.sin(time_counter * 2)
+    else:
+        fade_alpha = max(0, fade_alpha - 10)
+        scale_factor = 1.0
+
+    if fade_alpha > 0:
+        text_surf = font.render(NAME, True, TEXT_COLOR)
+        text_surf.set_alpha(fade_alpha)
+        scaled = pygame.transform.rotozoom(text_surf, 0, scale_factor)
+        rect = scaled.get_rect(center=(WIDTH // 2, HEIGHT // 2))
+        screen.blit(scaled, rect)
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+
+    pygame.display.flip()
+    clock.tick(60)
+
+pygame.quit()
