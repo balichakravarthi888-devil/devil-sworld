@@ -15,3 +15,4 @@ printf("\n the given number is odd number");
 getch();
 }
 
+
